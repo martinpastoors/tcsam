@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>Observation variance in SAM</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Observation variance in SAM</h1>
+
+
+
+<p>In this vignette we elaborate the available options in SAM for configuring the observation variance of the indices and catches.</p>
+<p>We want to hight that the configurations below can be combined. The user can e.g. say that we want to estimate correlation structures internally for all surveys, utilize external variance estimates for catch data, and apply a link between prediction and variance for all surveys.</p>
+<div id="internally-estimated-variance-and-correlation" class="section level2">
+<h2>1) Internally estimated variance and correlation</h2>
+<p>The configuration setting <code>keyVarObs</code> couples the observation variances. Covariance structures are assigned by modifying the configuration settings <code>obsCorStruct</code> and <code>keyCorObs</code>.</p>
+<details>
+<p><summary> Configuration example: </summary></p>
+<p><img src="data:image/png;base64,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" width="300px" /></p>
+An example of configuration settings imposing separate variance parameters for each fleet, independence between ages in catch data (typically used), and AR1 structure between ages within each survey. Note that separate AR1-parameter are here assumed between the youngest ages within each survey. Details regarding the correlation structures are provided here: <a href="https://academic.oup.com/icesjms/article/73/7/1788/2458744">Berg and Nielsen (2016)</a>
+</details>
+<p>When exploring the correlation structure for a given survey, it is often convenient to apply a free correlation structure by assigning <code>obsCorStruct</code> to “US”, and couple the AR1 parameters by investigating the estimated correlation structure with <code>corplot()</code>.</p>
+</div>
+<div id="prediction-variance-link" class="section level2">
+<h2>2) Prediction-variance link</h2>
+<p>SAM can accomondate for a possible link between observation variance and the corresponding predicted observation. The intuition behind the link is that the relative uncertainty typically decrease with the expected observation size. E.g. if we predict 1 fish, the observation is typically more likely to miss the prediction with a given factor compared to if we prediced a million fish.</p>
+
+<p>Let <span class="math inline">\(\mu_{a,y}\)</span> be the predicted observation for age <span class="math inline">\(a\)</span> at year <span class="math inline">\(y\)</span> on natural scale, and let <span class="math inline">\(v_{a,y}\)</span> be the corresponding variance. With this option we impose the assumption that <span class="math display">\[\begin{align}
+v_{a,y} = \alpha \mu_{a,y}^{\beta},  \nonumber
+\end{align}\]</span> and estimate <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> internally in SAM.</p>
+<p>The prediction-variance link option is selcted by providing the configuration <code>predVarObsLink</code> which couples the <span class="math inline">\(\beta\)</span> parameters. SAM will further use the settings provided in <code>keyVarObs</code> to couple the <span class="math inline">\(\alpha\)</span> parameters. See <a href="https://github.com/fishfollower/SAM/blob/master/testmore/neaHaddockPredVar/script.R">here</a> for an example.</p>
+</div>
+<div id="external-variancecovariance-estimates" class="section level2">
+<h2>3) External variance/covariance estimates</h2>
+<p>The user can provide external variance and covariance estimates for the observations. Here we go trough these options:</p>
+<ol style="list-style-type: decimal">
+<li>Provide external observation variance estimates.</li>
+<li>Provide external observation correlation matrices.</li>
+<li>Provide external observation covariance matrices.</li>
+</ol>
+<div id="provide-external-variance-estimates" class="section level4">
+<h4>Provide external variance estimates</h4>
+<p>External observation variance estimates can be included in SAM. This is achived by assigning a <code>weight</code> attribute to the corresponding survey or catch data before it is passed to <code>setup.sam.data()</code>. The <code>weight</code> attribute must have the same dimensions as the correspoonding observation matrix, and provide the precision of each estimate.</p>
+<p>An example with use of external variance estimates is provided <a href="https://github.com/fishfollower/SAM/blob/master/testmore/herringVar/script.R">here</a>. The important lines in this example are when we assign the <code>weight</code> attributes equal the precision:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">attributes</span>(cn)<span class="op">$</span>weight =<span class="st"> </span><span class="dv">1</span><span class="op">/</span>varC</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">attributes</span>(surveys[[<span class="dv">1</span>]])<span class="op">$</span>weight =<span class="st"> </span><span class="dv">1</span><span class="op">/</span>varS1</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">attributes</span>(surveys[[<span class="dv">2</span>]])<span class="op">$</span>weight =<span class="st"> </span><span class="dv">1</span><span class="op">/</span>varS2</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="kw">attributes</span>(surveys[[<span class="dv">3</span>]])<span class="op">$</span>weight =<span class="st"> </span><span class="dv">1</span><span class="op">/</span>varS3</a></code></pre></div>
+<p>The provided external variance estimates are by default used in SAM as relative weights, i.e. scaled with the internal estimated observation variance coupled with the <code>keyVarObs</code> configuration. We can use the provided variance estimates as fixed variances by setting the <code>fixVarToWeight</code> configuration equal to 1.</p>
+<p>Remember that there are options available for estimating the observation correlation structure in SAM by choosing the desiered <code>obsCorStruct</code> configuration. If the user provide external variances, we recomend to investigate to combine those with an internally estimated correlation structures.</p>
+</div>
+<div id="provide-external-correlation-matrices" class="section level4">
+<h4>Provide external correlation matrices</h4>
+<p>External correlation matrices can be provided by assigning a list containing the correlation matrices as an attribute to the corresponding data. The attribute must be named <code>cor</code>. An example with use of external correlation matrices is provided <a href="https://github.com/fishfollower/SAM/blob/master/testmore/nscodcovar/script.R">here</a>. The important line in this example is when we assign <code>cor</code> equal the list of externally estimated correlation matrices:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">attr</span>(surveys[[<span class="dv">2</span>]], <span class="st">&quot;cor&quot;</span>) &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">23</span>, <span class="cf">function</span>(i)estcor)</a></code></pre></div>
+</div>
+<div id="provide-external-covariance-matrices" class="section level4">
+<h4>Provide external covariance matrices</h4>
+<p>External covariance matrices can be provided by assigning a list with the covariance matrices as an attribute named <code>cov-weight</code> to the given data. For an example, see <a href="https://github.com/fishfollower/SAM/blob/master/testmore/nscodcovar/script.R">here</a>. The important line in this example is when we assign the <code>cov-weight</code> attribute equal the list with the externally estimated covariance matrices:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">attr</span>(surveys[[<span class="dv">2</span>]], <span class="st">&quot;cov-weight&quot;</span>) &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">23</span>, <span class="cf">function</span>(i)estcov)</a></code></pre></div>
+<p>Note that the estimated variances will be scaled internally in SAM when we provide the <code>cov-weight</code> attribute, and the correlation structure will be used as fixed. If we want to use the externally estiamted variances as fixed, we rename the attribut to <code>cov</code>, i.e:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">attr</span>(surveys[[<span class="dv">2</span>]], <span class="st">&quot;cov&quot;</span>) &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">23</span>, <span class="cf">function</span>(i)estcov)</a></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
